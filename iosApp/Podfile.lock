@@ -1,25 +1,25 @@
 PODS:
+  - appsflyer (1.0.0):
+    - AppsFlyerFramework (= 6.11.2)
   - AppsFlyerFramework (6.11.2):
     - AppsFlyerFramework/Main (= 6.11.2)
   - AppsFlyerFramework/Main (6.11.2)
-  - shared (1.0.0):
-    - AppsFlyerFramework (= 6.11.2)
 
 DEPENDENCIES:
-  - shared (from `../shared`)
+  - appsflyer (from `../appsflyer`)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AppsFlyerFramework
 
 EXTERNAL SOURCES:
-  shared:
-    :path: "../shared"
+  appsflyer:
+    :path: "../appsflyer"
 
 SPEC CHECKSUMS:
+  appsflyer: 77e8d070bc9451da095b22f8a5526ead5ae8886c
   AppsFlyerFramework: e22e8f0e746b4f568d9bb0b078180c6ad95e2609
-  shared: fa0a031aaa832b4af1149f79264e2626107bda2f
 
-PODFILE CHECKSUM: 837dfc581515a3f33c40756ee2a83e0cf23cc3cd
+PODFILE CHECKSUM: 9aa495c0099fe40542ebf0cf579cfcaa79862eb9
 
 COCOAPODS: 1.15.0

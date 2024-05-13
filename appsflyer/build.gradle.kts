@@ -38,8 +38,8 @@ kotlin {
 
     cocoapods {
         version = "1.0.0"
-        summary = "Some description for the Shared Module"
-        homepage = "Link to the Shared Module homepage"
+        summary = "Some description for the AppsFlyer Module"
+        homepage = "Link to the AppsFlyer Module homepage"
         ios.deploymentTarget = "14.1"
         podfile = project.file("../iosApp/Podfile")
 
@@ -109,10 +109,6 @@ android {
 }
 
 publishing {
-    publications.withType<MavenPublication> {
-        artifactId = libName.lowercase()
-    }
-
     repositories {
         val localProperties = gradleLocalProperties(rootDir, providers)
         var publishUserRepo = localProperties.getProperty("PUBLISH_REPO_USER")
