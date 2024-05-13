@@ -1,5 +1,7 @@
-pluginManagement {
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        gradlePluginPortal()
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -8,21 +10,10 @@ pluginManagement {
             }
         }
         mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
-    repositories {
-        gradlePluginPortal()
-        google()
-        mavenCentral()
         mavenLocal()
         maven(url = "https://jitpack.io")
     }
 }
-
 
 rootProject.name = "Appsflyer"
 include(":shared")
