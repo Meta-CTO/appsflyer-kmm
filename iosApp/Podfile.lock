@@ -1,0 +1,25 @@
+PODS:
+  - AppsFlyerFramework (6.11.2):
+    - AppsFlyerFramework/Main (= 6.11.2)
+  - AppsFlyerFramework/Main (6.11.2)
+  - shared (1.0.0):
+    - AppsFlyerFramework (= 6.11.2)
+
+DEPENDENCIES:
+  - shared (from `../shared`)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - AppsFlyerFramework
+
+EXTERNAL SOURCES:
+  shared:
+    :path: "../shared"
+
+SPEC CHECKSUMS:
+  AppsFlyerFramework: e22e8f0e746b4f568d9bb0b078180c6ad95e2609
+  shared: fa0a031aaa832b4af1149f79264e2626107bda2f
+
+PODFILE CHECKSUM: 837dfc581515a3f33c40756ee2a83e0cf23cc3cd
+
+COCOAPODS: 1.15.0
