@@ -26,7 +26,6 @@ val libName = "appsflyer"
 version = currentVersion
 group = "com.metacto"
 
-
 kotlin {
     androidTarget {
         compilations.all {
@@ -110,13 +109,17 @@ android {
 }
 
 publishing {
+    publications.withType<MavenPublication> {
+        artifactId = libName.lowercase()
+    }
+
     repositories {
         val localProperties = gradleLocalProperties(rootDir, providers)
         var publishUserRepo = localProperties.getProperty("PUBLISH_REPO_USER")
         var publishTokenRepo = localProperties.getProperty("PUBLISH_REPO_TOKEN")
 
         if (publishUserRepo.isNullOrEmpty()) {
-            publishUserRepo  = ""
+            publishUserRepo = ""
             localProperties.setProperty("PUBLISH_REPO_USER", publishUserRepo)
         }
 
