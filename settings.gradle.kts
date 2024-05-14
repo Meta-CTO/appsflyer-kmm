@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Appsflyer"
-include(":appsflyer")
+include(":appsFlyer")
