@@ -72,7 +72,7 @@ actual class AppsFlyerOneLinkService actual constructor(
                     mediaSource = deepLink?.mediaSource,
                     matchType = deepLink?.matchType,
                     clickEventJson = deepLink?.clickEvent.toString(),
-                    metadata = fullDeepLinkValue?.let { this.getDeepLinkMetadata(fullDeepLinkValue) }
+                    metadata = fullDeepLinkValue?.let { this.getDeepLinkMetadata(fullDeepLinkValue, clickEventValues) }
                 )
 
                 options.listener.onDeepLinkingResult(deepLinkResult)
