@@ -1,5 +1,5 @@
 Pod::Spec.new do |spec|
-    spec.name                     = 'appsFlyer'
+    spec.name                     = 'appsflyer'
     spec.version                  = '1.0.0'
     spec.homepage                 = 'Link to the AppsFlyer Module homepage'
     spec.source                   = { :http=> ''}
@@ -17,19 +17,19 @@ Pod::Spec.new do |spec|
         Kotlin framework 'appsFlyer' doesn't exist yet, so a proper Xcode project can't be generated.
         'pod install' should be executed after running ':generateDummyFramework' Gradle task:
 
-            ./gradlew :appsFlyer:generateDummyFramework
+            ./gradlew :appsflyer:generateDummyFramework
 
         Alternatively, proper pod installation is performed during Gradle sync in the IDE (if Podfile location is set)"
     end
                 
     spec.pod_target_xcconfig = {
-        'KOTLIN_PROJECT_PATH' => ':appsFlyer',
+        'KOTLIN_PROJECT_PATH' => ':appsflyer',
         'PRODUCT_MODULE_NAME' => 'appsFlyer',
     }
                 
     spec.script_phases = [
         {
-            :name => 'Build appsFlyer',
+            :name => 'Build appsflyer',
             :execution_position => :before_compile,
             :shell_path => '/bin/sh',
             :script => <<-SCRIPT

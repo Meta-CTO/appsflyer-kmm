@@ -95,7 +95,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.metacto.kmm.appsFlyer"
+    namespace = "com.metacto.kmm.appsflyer"
     compileSdk = Versions.Android.COMPILE_SDK
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
