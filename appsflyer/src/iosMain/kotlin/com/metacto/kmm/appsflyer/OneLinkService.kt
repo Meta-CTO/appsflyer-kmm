@@ -72,7 +72,7 @@ actual class OneLinkService actual constructor(
                     mediaSource = deepLink?.mediaSource,
                     matchType = deepLink?.matchType,
                     clickEventJson = deepLink?.clickEvent.toString(),
-                    metadata = fullDeepLinkValue?.let { this.getDeepLinkMetadata(fullDeepLinkValue, clickEventValues) }
+                    metadata = this.getDeepLinkMetadata(fullDeepLinkValue, clickEventValues)
                 )
 
                 options.listener.onDeepLinkingResult(deepLinkResult)
