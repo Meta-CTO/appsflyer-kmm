@@ -1,8 +1,8 @@
-package com.metacto.kmm.appsFlyer.util
+package com.metacto.kmm.appsflyer.util
 
-import com.metacto.kmm.appsFlyer.OneLinkService
-import com.metacto.kmm.appsFlyer.ShareLinkGenerator
-import com.metacto.kmm.appsFlyer.model.AppAttributionResult
+import com.metacto.kmm.appsflyer.OneLinkService
+import com.metacto.kmm.appsflyer.ShareLinkGenerator
+import com.metacto.kmm.appsflyer.model.AppAttributionResult
 fun OneLinkService.getAppAttributionResult(
     attributions: Map<*, *>,
 ): AppAttributionResult {

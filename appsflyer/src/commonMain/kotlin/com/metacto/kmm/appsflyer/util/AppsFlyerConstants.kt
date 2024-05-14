@@ -1,4 +1,4 @@
-package com.metacto.kmm.appsFlyer.util
+package com.metacto.kmm.appsflyer.util
 
 object AppsFlyerConstants {
     const val AF_STATUS = "af_status"

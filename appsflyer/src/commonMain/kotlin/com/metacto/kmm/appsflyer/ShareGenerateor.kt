@@ -1,6 +1,6 @@
-package com.metacto.kmm.appsFlyer
+package com.metacto.kmm.appsflyer
 
-import com.metacto.kmm.appsFlyer.model.BaseUrl
+import com.metacto.kmm.appsflyer.model.BaseUrl
 
 expect object ShareLinkGenerator {
     suspend fun generateShareLink(

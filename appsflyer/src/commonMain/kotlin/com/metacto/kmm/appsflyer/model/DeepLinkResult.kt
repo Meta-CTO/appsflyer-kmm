@@ -1,4 +1,4 @@
-package com.metacto.kmm.appsFlyer.model
+package com.metacto.kmm.appsflyer.model
 
 data class DeepLinkResult(
     val destination: String?,

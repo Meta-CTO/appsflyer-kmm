@@ -1,7 +1,7 @@
-package com.metacto.kmm.appsFlyer.model
+package com.metacto.kmm.appsflyer.model
 
-import com.metacto.kmm.appsFlyer.OneLinkService
-import com.metacto.kmm.appsFlyer.util.AppsFlyerConstants
+import com.metacto.kmm.appsflyer.OneLinkService
+import com.metacto.kmm.appsflyer.util.AppsFlyerConstants
 
 data class DeepLinkMetadata(
     val referrerName: String?,

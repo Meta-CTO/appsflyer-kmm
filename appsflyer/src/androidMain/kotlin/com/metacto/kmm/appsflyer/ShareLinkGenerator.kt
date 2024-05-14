@@ -1,9 +1,9 @@
-package com.metacto.kmm.appsFlyer
+package com.metacto.kmm.appsflyer
 
 import com.appsflyer.share.ShareInviteHelper
-import com.metacto.kmm.appsFlyer.model.BaseUrl
-import com.metacto.kmm.appsFlyer.util.AppsFlyerConstants
-import com.metacto.kmm.appsFlyer.util.generateDeepLinkValue
+import com.metacto.kmm.appsflyer.model.BaseUrl
+import com.metacto.kmm.appsflyer.util.AppsFlyerConstants
+import com.metacto.kmm.appsflyer.util.generateDeepLinkValue
 
 actual object ShareLinkGenerator {
     actual suspend fun generateShareLink(

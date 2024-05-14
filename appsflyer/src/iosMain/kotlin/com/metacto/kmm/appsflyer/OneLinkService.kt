@@ -1,18 +1,18 @@
 @file:OptIn(ExperimentalForeignApi::class)
 
-package com.metacto.kmm.appsFlyer
+package com.metacto.kmm.appsflyer
 
 import cocoapods.AppsFlyerFramework.AFSDKDeepLinkResultStatus
 import cocoapods.AppsFlyerFramework.AppsFlyerDeepLinkDelegateProtocol
 import cocoapods.AppsFlyerFramework.AppsFlyerDeepLinkResult
 import cocoapods.AppsFlyerFramework.AppsFlyerLib
 import cocoapods.AppsFlyerFramework.AppsFlyerLibDelegateProtocol
-import com.metacto.kmm.appsFlyer.model.DeepLinkError
-import com.metacto.kmm.appsFlyer.model.DeepLinkResult
-import com.metacto.kmm.appsFlyer.model.getDeepLinkValue
-import com.metacto.kmm.appsFlyer.model.getDeepLinkMetadata
-import com.metacto.kmm.appsFlyer.model.getDestinationPath
-import com.metacto.kmm.appsFlyer.util.getAppAttributionResult
+import com.metacto.kmm.appsflyer.model.DeepLinkError
+import com.metacto.kmm.appsflyer.model.DeepLinkResult
+import com.metacto.kmm.appsflyer.model.getDeepLinkValue
+import com.metacto.kmm.appsflyer.model.getDeepLinkMetadata
+import com.metacto.kmm.appsflyer.model.getDestinationPath
+import com.metacto.kmm.appsflyer.util.getAppAttributionResult
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
 import platform.Foundation.NSError

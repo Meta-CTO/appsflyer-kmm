@@ -1,7 +1,7 @@
-package com.metacto.kmm.appsFlyer
+package com.metacto.kmm.appsflyer
 
-import com.metacto.kmm.appsFlyer.model.DeepLinkError
-import com.metacto.kmm.appsFlyer.model.DeepLinkResult
+import com.metacto.kmm.appsflyer.model.DeepLinkError
+import com.metacto.kmm.appsflyer.model.DeepLinkResult
 
 interface OneLinkListener {
     fun onAppAttribution(

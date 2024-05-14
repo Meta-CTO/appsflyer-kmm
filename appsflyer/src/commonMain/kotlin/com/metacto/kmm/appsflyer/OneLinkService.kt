@@ -1,4 +1,4 @@
-package com.metacto.kmm.appsFlyer
+package com.metacto.kmm.appsflyer
 
 expect class OneLinkService(
     options: OneLinkOptions

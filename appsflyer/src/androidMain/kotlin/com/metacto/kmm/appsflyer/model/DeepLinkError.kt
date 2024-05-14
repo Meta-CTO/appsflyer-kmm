@@ -1,4 +1,4 @@
-package com.metacto.kmm.appsFlyer.model
+package com.metacto.kmm.appsflyer.model
 
 import com.appsflyer.deeplink.DeepLinkResult
 

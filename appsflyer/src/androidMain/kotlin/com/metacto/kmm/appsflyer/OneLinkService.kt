@@ -1,4 +1,4 @@
-package com.metacto.kmm.appsFlyer
+package com.metacto.kmm.appsflyer
 
 import android.content.Context
 import com.appsflyer.AppsFlyerConversionListener
@@ -6,11 +6,11 @@ import com.appsflyer.AppsFlyerLib
 import com.appsflyer.attribution.AppsFlyerRequestListener
 import com.appsflyer.deeplink.DeepLinkListener
 import com.appsflyer.deeplink.DeepLinkResult
-import com.metacto.kmm.appsFlyer.model.getDeepLinkValue
-import com.metacto.kmm.appsFlyer.model.getDeepLinkMetadata
-import com.metacto.kmm.appsFlyer.model.getDestinationPath
-import com.metacto.kmm.appsFlyer.model.toError
-import com.metacto.kmm.appsFlyer.util.getAppAttributionResult
+import com.metacto.kmm.appsflyer.model.getDeepLinkValue
+import com.metacto.kmm.appsflyer.model.getDeepLinkMetadata
+import com.metacto.kmm.appsflyer.model.getDestinationPath
+import com.metacto.kmm.appsflyer.model.toError
+import com.metacto.kmm.appsflyer.util.getAppAttributionResult
 
 actual class OneLinkService actual constructor(
     val options: OneLinkOptions
@@ -59,7 +59,7 @@ actual class OneLinkService actual constructor(
                 val deepLink = deepLinkResult.deepLink
                 val clickEventValues = deepLink.clickEvent.toMap()
                 val fullDeepLinkValue = deepLink.deepLinkValue ?: this.getDeepLinkValue(clickEventValues)
-                val result = com.metacto.kmm.appsFlyer.model.DeepLinkResult(
+                val result = com.metacto.kmm.appsflyer.model.DeepLinkResult(
                     destination = fullDeepLinkValue?.let { this.getDestinationPath(fullDeepLinkValue) },
                     campaign = deepLink.campaign,
                     campaignId = deepLink.campaignId,
