@@ -1,6 +1,6 @@
 object Versions {
     object Kotlin {
-        const val KOTLIN = "1.9.23"
+        const val KOTLIN = "2.0.21"
         const val COROUTINES = "1.8.1"
     }
 
@@ -10,13 +10,12 @@ object Versions {
     }
 
     object Gradle {
-        const val BUILD_TOOLS = "8.4.0"
+        const val BUILD_TOOLS = "8.7.1"
     }
 
     object Libs {
-        const val APPS_FLYER_POD = "6.11.2"
+        const val APPS_FLYER_POD = "6.16.2"
         const val APPS_FLYER_LIB = "6.+"
         const val INSTALL_REFERRER = "2.2"
     }
-
 }
