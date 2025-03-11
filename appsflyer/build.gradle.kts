@@ -46,6 +46,7 @@ kotlin {
         pod(Libs.APPS_FLYER_POD) {
             version = Versions.Libs.APPS_FLYER_POD
             moduleName = Libs.APPS_FLYER_MODULE_NAME
+            extraOpts += listOf("-compiler-option", "-fmodules")
         }
 
         framework {
