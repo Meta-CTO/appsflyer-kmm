@@ -53,6 +53,10 @@ actual class OneLinkService actual constructor(
             options.appInviteOneLinkTemplateId?.let {
                 setAppInviteOneLink(it)
             }
+
+            options.oneLinkCustomDomains?.let {
+                setOneLinkCustomDomains(it)
+            }
         }
     }
 
