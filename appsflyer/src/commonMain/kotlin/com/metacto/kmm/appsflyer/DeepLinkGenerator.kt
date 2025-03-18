@@ -15,6 +15,7 @@ class DeepLinkGenerator private constructor(
     private val referrerImageURL: String?,
     private val brandDomain: String?,
     private val baseURL: BaseUrl?,
+    private val customShortLink: String?,
     private val parameters: Map<String, String>
 ) {
     class Builder(private val context: Any? = null, private val destination: String) {
@@ -29,6 +30,8 @@ class DeepLinkGenerator private constructor(
         private var brandDomain: String? = null
         private var baseURL: BaseUrl? = null
         private val parameters: MutableMap<String, String> = mutableMapOf()
+        private var customShortLink: String? = null
+
 
         fun setChannel(channel: String) = apply { this.channel = channel }
         fun setReferrerCustomerId(referrerCustomerId: String) =
@@ -45,6 +48,7 @@ class DeepLinkGenerator private constructor(
             apply { this.baseURL = BaseUrl(oneLinkID, domain, appPackage) }
         fun addParameter(key: String, value: String) = apply { this.parameters[key] = value }
         fun addParameters(params: Map<String, String>) = apply { this.parameters.putAll(params) }
+        fun setCustomShortLink(customLink: String) = apply { this.customShortLink = customLink }
         fun build() = DeepLinkGenerator(
             context,
             destination,
@@ -58,6 +62,7 @@ class DeepLinkGenerator private constructor(
             referrerImageURL,
             brandDomain,
             baseURL,
+            customShortLink,
             parameters
         )
     }
@@ -75,6 +80,7 @@ class DeepLinkGenerator private constructor(
         referrerImageURL,
         brandDomain,
         baseURL,
+        customShortLink,
         parameters
     )
 }
