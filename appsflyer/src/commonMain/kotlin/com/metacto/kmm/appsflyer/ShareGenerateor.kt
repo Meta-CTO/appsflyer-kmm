@@ -16,6 +16,7 @@ expect object ShareLinkGenerator {
         referrerImageURL: String? = null,
         brandDomain: String? = null,
         baseURL: BaseUrl? = null,
+        customShortLink: String?,
         parameters: Map<String, String>? = null,
     ): String?
 }

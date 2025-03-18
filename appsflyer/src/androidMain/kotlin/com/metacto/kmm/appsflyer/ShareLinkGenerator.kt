@@ -19,6 +19,7 @@ actual object ShareLinkGenerator {
         referrerImageURL: String?,
         brandDomain: String?,
         baseURL: BaseUrl?,
+        customShortLink: String?,
         parameters: Map<String, String>?
     ): String? {
         if (context == null || context !is android.content.Context) {
@@ -39,6 +40,8 @@ actual object ShareLinkGenerator {
            )
 
            addParameter(AppsFlyerConstants.DEEP_LINK_VALUE, deepLinkValue)
+
+           addParameter("af_custom_shortlink", "true")
 
             channel?.let {
                 setChannel(it)
@@ -82,6 +85,9 @@ actual object ShareLinkGenerator {
             parameters?.let {
                 addParameters(it)
             }
+           customShortLink?.let {
+                addParameter("af_custom_shortlink", customShortLink)
+           }
         }
         return generator.generateLink()
     }

@@ -25,6 +25,7 @@ actual object ShareLinkGenerator {
         referrerImageURL: String?,
         brandDomain: String?,
         baseURL: BaseUrl?,
+        customShortLink: String?,
         parameters: Map<String, String>?
     ): String? {
         return suspendCancellableCoroutine { cont ->
@@ -85,6 +86,10 @@ actual object ShareLinkGenerator {
 
                     parameters?.forEach { entry ->
                         linkGenerator?.addParameterValue(forKey = entry.key, value = entry.value)
+                    }
+
+                    customShortLink?.let {
+                        linkGenerator?.addParameterValue(forKey = "af_custom_shortlink", value = customShortLink)
                     }
 
                     linkGenerator
