@@ -1,6 +1,6 @@
 object Versions {
     object Kotlin {
-        const val KOTLIN = "2.0.21"
+        const val KOTLIN = "2.1.10"
         const val COROUTINES = "1.8.1"
     }
 
@@ -10,7 +10,7 @@ object Versions {
     }
 
     object Gradle {
-        const val BUILD_TOOLS = "8.7.1"
+        const val BUILD_TOOLS = "8.8.2"
     }
 
     object Libs {
