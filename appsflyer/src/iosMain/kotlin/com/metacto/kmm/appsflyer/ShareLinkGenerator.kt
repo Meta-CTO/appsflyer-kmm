@@ -2,8 +2,8 @@
 
 package com.metacto.kmm.appsflyer
 
-import cocoapods.AppsFlyerFramework.AppsFlyerLinkGenerator
-import cocoapods.AppsFlyerFramework.AppsFlyerShareInviteHelper
+import AppsFlyerLib.AppsFlyerLinkGenerator
+import AppsFlyerLib.AppsFlyerShareInviteHelper
 import com.metacto.kmm.appsflyer.model.BaseUrl
 import com.metacto.kmm.appsflyer.util.AppsFlyerConstants
 import com.metacto.kmm.appsflyer.util.generateDeepLinkValue

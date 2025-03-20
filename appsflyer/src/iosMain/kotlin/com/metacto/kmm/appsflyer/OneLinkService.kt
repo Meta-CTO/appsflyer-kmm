@@ -2,11 +2,11 @@
 
 package com.metacto.kmm.appsflyer
 
-import cocoapods.AppsFlyerFramework.AFSDKDeepLinkResultStatus
-import cocoapods.AppsFlyerFramework.AppsFlyerDeepLinkDelegateProtocol
-import cocoapods.AppsFlyerFramework.AppsFlyerDeepLinkResult
-import cocoapods.AppsFlyerFramework.AppsFlyerLib
-import cocoapods.AppsFlyerFramework.AppsFlyerLibDelegateProtocol
+import AppsFlyerLib.AFSDKDeepLinkResultStatus
+import AppsFlyerLib.AppsFlyerDeepLinkDelegateProtocol
+import AppsFlyerLib.AppsFlyerDeepLinkResult
+import AppsFlyerLib.AppsFlyerLib
+import AppsFlyerLib.AppsFlyerLibDelegateProtocol
 import com.metacto.kmm.appsflyer.model.DeepLinkError
 import com.metacto.kmm.appsflyer.model.DeepLinkResult
 import com.metacto.kmm.appsflyer.model.getDeepLinkValue

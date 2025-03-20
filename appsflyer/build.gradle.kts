@@ -1,19 +1,18 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 import org.jetbrains.kotlin.konan.properties.Properties
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.net.URI
 
 plugins {
     id(Plugins.androidLibrary)
     kotlin(Plugins.Kotlin.multiplatform)
     kotlin(Plugins.Kotlin.serialization) version Versions.Kotlin.KOTLIN
-    kotlin(Plugins.cocoapods)
+    id(Plugins.SPM_4_KMP) version Versions.Plugins.SPM_4_KMP
     id(Plugins.mavenPublish)
     id(Plugins.signing)
+
 }
 
 val versionProperties = Properties().apply {
@@ -22,6 +21,7 @@ val versionProperties = Properties().apply {
 
 val currentVersion = versionProperties.getProperty("PUBLISH_VERSION") as String
 val libName = "appsFlyer"
+val cinteropName = "AppsFlyerSDK"
 
 version = currentVersion
 group = "com.metacto"
@@ -36,25 +36,6 @@ kotlin {
         publishLibraryVariants("debug", "release")
     }
 
-    cocoapods {
-        version = "1.0.0"
-        summary = "Some description for the AppsFlyer Module"
-        homepage = "Link to the AppsFlyer Module homepage"
-        ios.deploymentTarget = "14.1"
-        podfile = project.file("../iosApp/Podfile")
-
-        pod(Libs.APPS_FLYER_POD) {
-            version = Versions.Libs.APPS_FLYER_POD
-            moduleName = Libs.APPS_FLYER_MODULE_NAME
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
-
-        framework {
-            baseName = libName
-            isStatic = true
-        }
-    }
-
     val xcf = XCFramework()
     listOf(
         iosX64(),
@@ -64,7 +45,24 @@ kotlin {
         it.binaries.framework(libName) {
             baseName = libName
             xcf.add(this)
-            isStatic = true
+        }
+        it.compilations {
+            val main by getting {
+                cinterops.create(cinteropName)
+            }
+        }
+    }
+
+    swiftPackageConfig {
+        create(cinteropName) {
+            dependency {
+                remoteBinary(
+                    url = URI("https://github.com/AppsFlyerSDK/AppsFlyerFramework/releases/download/6.16.2/AppsFlyerLib-Dynamic-SPM.xcframework.zip"),
+                    exportToKotlin = true,
+                    packageName = "AppsFlyerLib",
+                    checksum = "6ce9bf6da08f85f6eafac2520ef0d0579d0724b3b2200cb46dcc18993cd02608"
+                )
+            }
         }
     }
 
