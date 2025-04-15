@@ -88,9 +88,6 @@ actual class OneLinkService actual constructor(
             options.minTimeBetweenSessions?.let { setMinTimeBetweenSessions(it) }
             init(options.devAppKey, conversionListener, options.context as Context)
             subscribeForDeepLink(deepLinkListener)
-            setOneLinkCustomDomain(
-                *options.oneLinkCustomDomains?.toTypedArray().orEmpty()
-            )
             if (options.appInviteOneLinkTemplateId != null) {
                 //set the OneLink template id for share invite links
                 setAppInviteOneLink(options.appInviteOneLinkTemplateId)
@@ -125,6 +122,11 @@ actual class OneLinkService actual constructor(
     }
 
     actual fun start() {
+        if (options.oneLinkCustomDomains.orEmpty().isNotEmpty()) {
+            AppsFlyerLib.getInstance().setOneLinkCustomDomain(
+                *options.oneLinkCustomDomains?.toTypedArray().orEmpty()
+            )
+        }
         initialize()
         AppsFlyerLib.getInstance().start(options.context as Context, options.devAppKey)
     }
