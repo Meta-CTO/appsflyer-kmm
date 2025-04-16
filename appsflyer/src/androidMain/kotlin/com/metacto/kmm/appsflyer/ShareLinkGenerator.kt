@@ -41,8 +41,6 @@ actual object ShareLinkGenerator {
 
            addParameter(AppsFlyerConstants.DEEP_LINK_VALUE, deepLinkValue)
 
-           addParameter("af_custom_shortlink", "true")
-
             channel?.let {
                 setChannel(it)
             }
