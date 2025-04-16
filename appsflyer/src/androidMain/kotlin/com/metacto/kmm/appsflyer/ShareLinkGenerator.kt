@@ -39,7 +39,7 @@ actual object ShareLinkGenerator {
             parameters
         )
 
-        generator.addParameter(AppsFlyerConstants.DEEP_LINK_VALUE, destination)
+        generator.addParameter(AppsFlyerConstants.DEEP_LINK_VALUE, deepLinkValue)
 
         channel?.let {
             generator.setChannel(it)

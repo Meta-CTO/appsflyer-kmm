@@ -86,12 +86,12 @@ actual class OneLinkService actual constructor(
         AppsFlyerLib.getInstance().apply {
             options.enableDebugLog?.let { setDebugLog(it) }
             options.minTimeBetweenSessions?.let { setMinTimeBetweenSessions(it) }
-            init(options.devAppKey, conversionListener, options.context as Context)
-            subscribeForDeepLink(deepLinkListener)
             if (options.appInviteOneLinkTemplateId != null) {
                 //set the OneLink template id for share invite links
                 setAppInviteOneLink(options.appInviteOneLinkTemplateId)
             }
+            subscribeForDeepLink(deepLinkListener)
+            init(options.devAppKey, conversionListener, options.context as Context)
         }
     }
 
@@ -128,6 +128,6 @@ actual class OneLinkService actual constructor(
             )
         }
         initialize()
-        AppsFlyerLib.getInstance().start(options.context as Context, options.devAppKey)
+        AppsFlyerLib.getInstance().start(options.context as Context, options.devAppKey,
     }
 }
