@@ -14,7 +14,7 @@ object Versions {
     }
 
     object Libs {
-        const val APPS_FLYER_LIB = "6.+"
+        const val APPS_FLYER_LIB = "6.14.0"
         const val INSTALL_REFERRER = "2.2"
     }
 
