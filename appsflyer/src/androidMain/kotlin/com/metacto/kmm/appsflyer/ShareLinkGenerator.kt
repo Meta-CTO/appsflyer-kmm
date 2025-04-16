@@ -25,68 +25,68 @@ actual object ShareLinkGenerator {
         if (context == null || context !is android.content.Context) {
             throw IllegalArgumentException("Context is required and must be an instance of android.content.Context")
         }
+        val generator = ShareInviteHelper.generateInviteUrl(context)
 
-       val generator =  ShareInviteHelper.generateInviteUrl(context).apply {
-           val deepLinkValue = generateDeepLinkValue(
-               destination,
-               channel,
-               referrerCustomerId,
-               baseDeepLink,
-               referrerName,
-               referrerUID,
-               campaign,
-               referrerImageURL,
-               parameters
-           )
+        val deepLinkValue = generateDeepLinkValue(
+            destination,
+            channel,
+            referrerCustomerId,
+            baseDeepLink,
+            referrerName,
+            referrerUID,
+            campaign,
+            referrerImageURL,
+            parameters
+        )
 
-           addParameter(AppsFlyerConstants.DEEP_LINK_VALUE, deepLinkValue)
+        generator.addParameter(AppsFlyerConstants.DEEP_LINK_VALUE, destination)
 
-            channel?.let {
-                setChannel(it)
-            }
-            referrerCustomerId?.let {
-                setReferrerCustomerId(it)
-            }
-            referrerName?.let {
-                setReferrerName(it)
-            }
-            referrerUID?.let {
-                setReferrerUID(it)
-            }
-            campaign?.let {
-                setCampaign(it)
-            }
-            baseDeepLink?.let {
-                setBaseDeeplink(it)
-            }
-            deepLinkPath?.let {
-                setDeeplinkPath(it)
-            }
-            referrerImageURL?.let {
-                setReferrerImageURL(it)
-            }
-
-           baseURL?.let {
-                setBaseURL(it.oneLinkID, it.domain, it.appPackage)
-            }
-
-            parameters?.let {
-                addParameters(it)
-            }
-
-           brandDomain?.let {
-                setBrandDomain(it)
-            }
-            baseURL?.let {
-                setBaseURL(it.oneLinkID, it.domain, it.appPackage)
-            }
-            parameters?.let {
-                addParameters(it)
-            }
-           customShortLink?.let {
-                addParameter("af_custom_shortlink", customShortLink)
-           }
+        channel?.let {
+            generator.setChannel(it)
         }
+        referrerCustomerId?.let {
+            generator.setReferrerCustomerId(it)
+        }
+        referrerName?.let {
+            generator.setReferrerName(it)
+        }
+        referrerUID?.let {
+            generator.setReferrerUID(it)
+        }
+        campaign?.let {
+            generator.setCampaign(it)
+        }
+        baseDeepLink?.let {
+            generator.setBaseDeeplink(it)
+        }
+        deepLinkPath?.let {
+            generator.setDeeplinkPath(it)
+        }
+        referrerImageURL?.let {
+            generator.setReferrerImageURL(it)
+        }
+
+        baseURL?.let {
+            generator.setBaseURL(it.oneLinkID, it.domain, it.appPackage)
+        }
+
+        parameters?.let {
+            generator.addParameters(it)
+        }
+
+        brandDomain?.let {
+            generator.setBrandDomain(it)
+        }
+        baseURL?.let {
+            generator.setBaseURL(it.oneLinkID, it.domain, it.appPackage)
+        }
+        parameters?.let {
+            generator.addParameters(it)
+        }
+        customShortLink?.let {
+            generator.addParameter("af_custom_shortlink", customShortLink)
+        }
+
         return generator.generateLink()
     }
 }
