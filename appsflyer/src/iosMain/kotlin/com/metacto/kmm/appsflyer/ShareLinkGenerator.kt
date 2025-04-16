@@ -7,6 +7,7 @@ import AppsFlyerLib.AppsFlyerShareInviteHelper
 import com.metacto.kmm.appsflyer.model.BaseUrl
 import com.metacto.kmm.appsflyer.util.AppsFlyerConstants
 import com.metacto.kmm.appsflyer.util.generateDeepLinkValue
+import com.metacto.kmm.appsflyer.util.resumeIfActive
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -96,7 +97,7 @@ actual object ShareLinkGenerator {
                 }
 
             AppsFlyerShareInviteHelper.generateInviteUrlWithLinkGenerator(configureLinkGenerator) { url ->
-                cont.resume(url?.absoluteString)
+                cont.resumeIfActive(url?.absoluteString)
             }
         }
     }

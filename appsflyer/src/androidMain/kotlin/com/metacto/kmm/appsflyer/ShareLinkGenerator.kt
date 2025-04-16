@@ -6,9 +6,12 @@ import com.appsflyer.share.LinkGenerator
 import com.appsflyer.share.ShareInviteHelper
 import com.metacto.kmm.appsflyer.model.BaseUrl
 import com.metacto.kmm.appsflyer.util.AppsFlyerConstants
+import com.metacto.kmm.appsflyer.util.exceptionIfActive
 import com.metacto.kmm.appsflyer.util.generateDeepLinkValue
+import com.metacto.kmm.appsflyer.util.resumeIfActive
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 actual object ShareLinkGenerator {
     actual suspend fun generateShareLink(
@@ -95,11 +98,11 @@ actual object ShareLinkGenerator {
 
             generator.generateLink(context, object : LinkGenerator.ResponseListener {
                 override fun onResponse(p0: String?) {
-                    cont.tryResume(p0)
+                    cont.resumeIfActive(p0)
                 }
 
                 override fun onResponseError(p0: String?) {
-                    cont.tryResumeWithException(
+                    cont.exceptionIfActive(
                         IllegalStateException("Error generating share link: $p0")
                     )
                 }

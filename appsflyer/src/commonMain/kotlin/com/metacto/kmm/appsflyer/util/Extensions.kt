@@ -3,6 +3,10 @@ package com.metacto.kmm.appsflyer.util
 import com.metacto.kmm.appsflyer.OneLinkService
 import com.metacto.kmm.appsflyer.ShareLinkGenerator
 import com.metacto.kmm.appsflyer.model.AppAttributionResult
+import kotlinx.coroutines.CancellableContinuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+
 fun OneLinkService.getAppAttributionResult(
     attributions: Map<*, *>,
 ): AppAttributionResult {
@@ -57,4 +61,12 @@ fun ShareLinkGenerator.generateDeepLinkValue(
     }
 
     return stringBuilder.toString()
+}
+
+fun <T> CancellableContinuation<T>.resumeIfActive(value: T) {
+    if (isActive) resume(value)
+}
+
+fun CancellableContinuation<*>.exceptionIfActive(throwable: Throwable) {
+    if (isActive) resumeWithException(throwable)
 }
