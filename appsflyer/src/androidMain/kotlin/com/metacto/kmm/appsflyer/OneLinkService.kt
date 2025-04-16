@@ -128,6 +128,6 @@ actual class OneLinkService actual constructor(
             )
         }
         initialize()
-        AppsFlyerLib.getInstance().start(options.context as Context, options.devAppKey,
+        AppsFlyerLib.getInstance().start(options.context as Context, options.devAppKey)
     }
 }
