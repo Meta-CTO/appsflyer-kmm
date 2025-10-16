@@ -2,6 +2,9 @@ package com.metacto.kmm.appsflyer.model
 
 import com.metacto.kmm.appsflyer.OneLinkService
 import com.metacto.kmm.appsflyer.util.AppsFlyerConstants
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 data class DeepLinkMetadata(
     val referrerName: String?,
@@ -19,7 +22,24 @@ fun OneLinkService.getDeepLinkValue(values: Map<Any?, *>): String? {
 }
 
 fun OneLinkService.getDestinationPath(fullDeepLinkValue: String): String? {
-    val values = fullDeepLinkValue.split("__")
+    return fullDeepLinkValue.parseJsonDestination() ?: fullDeepLinkValue.parseNormalDestination()
+}
+
+internal fun String.parseJsonDestination(): String? {
+    return try {
+        val destinationValue = Json.parseToJsonElement(this.trim()).let {
+            it.jsonObject[AppsFlyerConstants.DEEP_LINK_DESTINATION]?.jsonPrimitive?.content
+        }
+
+        val values = destinationValue?.split("__")
+        return values?.firstOrNull()
+    } catch (_: Throwable) {
+        null
+    }
+}
+
+internal fun String.parseNormalDestination(): String? {
+    val values = this.split("__")
     return values.find { it.startsWith(AppsFlyerConstants.DEEP_LINK_DESTINATION) }?.substringAfter("=")
 }
 

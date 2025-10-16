@@ -75,9 +75,10 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(Libs.COROUTINES)
+            implementation(Libs.SERIALIZATION_JSON)
         }
         commonTest.dependencies {
-
+            implementation(Libs.KOTLIN_TEST)
         }
 
         androidMain.dependencies {
