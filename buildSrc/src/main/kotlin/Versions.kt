@@ -2,6 +2,7 @@ object Versions {
     object Kotlin {
         const val KOTLIN = "2.1.10"
         const val COROUTINES = "1.8.1"
+        const val SERIALIZATION = "1.8.0"
     }
 
     object Android {
