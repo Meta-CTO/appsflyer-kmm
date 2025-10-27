@@ -43,6 +43,27 @@ internal fun String.parseNormalDestination(): String? {
     return values.find { it.startsWith(AppsFlyerConstants.DEEP_LINK_DESTINATION) }?.substringAfter("=")
 }
 
+fun hasDescopeToken(extras: Map<Any?, *>?): Boolean {
+    return extras?.containsKey("dt") == true
+}
+
+fun hasLoginType(extras: Map<Any?, *>?): Boolean {
+    return extras?.containsKey("lt") == true
+}
+
+fun getLoginType(extras: Map<Any?, *>?): LoginType? {
+    val value = extras?.get("lt")?.toString()
+    return when (value) {
+        "email" -> LoginType.EMAIL
+        "phone" -> LoginType.PHONE
+        else -> null
+    }
+}
+
+fun getAfSub1(extras: Map<Any?, *>?): String? {
+    return extras?.get("af_sub1")?.toString()
+}
+
 fun OneLinkService.getDeepLinkMetadata(deepLinkValue: String?, extraValues: Map<Any?, *>): DeepLinkMetadata {
     val values = deepLinkValue?.split("__").orEmpty()
     val referrerName =

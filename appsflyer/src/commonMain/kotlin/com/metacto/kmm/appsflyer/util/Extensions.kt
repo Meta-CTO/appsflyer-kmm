@@ -11,6 +11,7 @@ fun OneLinkService.getAppAttributionResult(
     attributions: Map<*, *>,
 ): AppAttributionResult {
     val isOrganic = attributions[AppsFlyerConstants.AF_STATUS] == AppsFlyerConstants.AF_ORGANIC_STATUS
+    @Suppress("UNCHECKED_CAST")
     val extras = attributions.filter { it.key != AppsFlyerConstants.AF_STATUS && it.key != null } as Map<Any, Any?>
 
     return AppAttributionResult(
