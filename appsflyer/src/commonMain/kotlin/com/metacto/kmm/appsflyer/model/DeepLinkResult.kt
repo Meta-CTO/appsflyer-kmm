@@ -9,5 +9,15 @@ data class DeepLinkResult(
     val mediaSource: String?,
     val matchType: String?,
     val clickEventJson: String?,
-    val metadata: DeepLinkMetadata?
+    val metadata: DeepLinkMetadata?,
+    val deeplinkSource: DeeplinkSource,
+    val hasDescopeToken: Boolean,
+    val hasLoginType: Boolean,
+    val loginType: LoginType?,
+    val udlStatus: UdlStatus?,
+    val udlMatchType: String?,
+    val gcdAfStatus: GcdAfStatus?,
+    val gcdMediaSource: String?,
+    val gcdCampaign: String?,
+    val afSub1: String?
 )

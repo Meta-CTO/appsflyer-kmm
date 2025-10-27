@@ -12,6 +12,13 @@ import com.metacto.kmm.appsflyer.model.DeepLinkResult
 import com.metacto.kmm.appsflyer.model.getDeepLinkValue
 import com.metacto.kmm.appsflyer.model.getDeepLinkMetadata
 import com.metacto.kmm.appsflyer.model.getDestinationPath
+import com.metacto.kmm.appsflyer.model.hasDescopeToken
+import com.metacto.kmm.appsflyer.model.hasLoginType
+import com.metacto.kmm.appsflyer.model.getLoginType
+import com.metacto.kmm.appsflyer.model.getAfSub1
+import com.metacto.kmm.appsflyer.model.DeeplinkSource
+import com.metacto.kmm.appsflyer.model.UdlStatus
+import com.metacto.kmm.appsflyer.model.GcdAfStatus
 import com.metacto.kmm.appsflyer.util.getAppAttributionResult
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
@@ -67,6 +74,8 @@ actual class OneLinkService actual constructor(
                 val clickEventValues = deepLink?.clickEvent?.toMap() ?: emptyMap()
                 val fullDeepLinkValue =
                     deepLink?.deeplinkValue ?: this.getDeepLinkValue(clickEventValues)
+                val metadata = this.getDeepLinkMetadata(fullDeepLinkValue, clickEventValues)
+
                 val deepLinkResult = DeepLinkResult(
                     destination = fullDeepLinkValue?.let { this.getDestinationPath(fullDeepLinkValue) },
                     campaign = deepLink?.campaign,
@@ -76,7 +85,17 @@ actual class OneLinkService actual constructor(
                     mediaSource = deepLink?.mediaSource,
                     matchType = deepLink?.matchType,
                     clickEventJson = deepLink?.clickEvent.toString(),
-                    metadata = this.getDeepLinkMetadata(fullDeepLinkValue, clickEventValues)
+                    metadata = metadata,
+                    deeplinkSource = DeeplinkSource.UDL,
+                    hasDescopeToken = hasDescopeToken(metadata.extras),
+                    hasLoginType = hasLoginType(metadata.extras),
+                    loginType = getLoginType(metadata.extras),
+                    udlStatus = UdlStatus.FOUND,
+                    udlMatchType = deepLink?.matchType,
+                    gcdAfStatus = null,
+                    gcdMediaSource = null,
+                    gcdCampaign = null,
+                    afSub1 = getAfSub1(clickEventValues)
                 )
 
                 options.listener.onDeepLinkingResult(deepLinkResult)
@@ -103,6 +122,34 @@ actual class OneLinkService actual constructor(
     override fun onConversionDataSuccess(conversionInfo: Map<Any?, *>) {
         val appConversionResult = this.getAppAttributionResult(conversionInfo)
         options.listener.onAppAttribution(appConversionResult.isOrganic, appConversionResult.extras)
+
+        val gcdMediaSource = appConversionResult.extras["media_source"]?.toString()
+        val gcdCampaign = appConversionResult.extras["campaign"]?.toString()
+        @Suppress("UNCHECKED_CAST")
+        val extras = appConversionResult.extras as Map<Any?, *>
+
+        val deepLinkResult = DeepLinkResult(
+            destination = null,
+            campaign = gcdCampaign,
+            campaignId = null,
+            clickHttpReferrer = null,
+            isDeferred = false,
+            mediaSource = gcdMediaSource,
+            matchType = null,
+            clickEventJson = null,
+            metadata = null,
+            deeplinkSource = DeeplinkSource.GCD,
+            hasDescopeToken = hasDescopeToken(extras),
+            hasLoginType = hasLoginType(extras),
+            loginType = getLoginType(extras),
+            udlStatus = null,
+            udlMatchType = null,
+            gcdAfStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC,
+            gcdMediaSource = gcdMediaSource,
+            gcdCampaign = gcdCampaign,
+            afSub1 = getAfSub1(extras)
+        )
+        options.listener.onDeepLinkingResult(deepLinkResult)
     }
 
     actual fun start(

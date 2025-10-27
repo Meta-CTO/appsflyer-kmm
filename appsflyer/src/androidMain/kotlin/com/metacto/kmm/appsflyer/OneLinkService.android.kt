@@ -10,7 +10,15 @@ import com.metacto.kmm.appsflyer.model.getDeepLinkValue
 import com.metacto.kmm.appsflyer.model.getDeepLinkMetadata
 import com.metacto.kmm.appsflyer.model.getDestinationPath
 import com.metacto.kmm.appsflyer.model.toError
+import com.metacto.kmm.appsflyer.model.hasDescopeToken
+import com.metacto.kmm.appsflyer.model.hasLoginType
+import com.metacto.kmm.appsflyer.model.getLoginType
+import com.metacto.kmm.appsflyer.model.getAfSub1
+import com.metacto.kmm.appsflyer.model.DeeplinkSource
+import com.metacto.kmm.appsflyer.model.UdlStatus
+import com.metacto.kmm.appsflyer.model.GcdAfStatus
 import com.metacto.kmm.appsflyer.util.getAppAttributionResult
+import com.metacto.kmm.appsflyer.model.DeepLinkResult as KMMDeepLinkResult
 
 actual class OneLinkService actual constructor(
     val options: OneLinkOptions
@@ -30,6 +38,34 @@ actual class OneLinkService actual constructor(
                     appConversionResult.isOrganic,
                     appConversionResult.extras
                 )
+
+                val gcdMediaSource = appConversionResult.extras["media_source"]?.toString()
+                val gcdCampaign = appConversionResult.extras["campaign"]?.toString()
+                @Suppress("UNCHECKED_CAST")
+                val extras = appConversionResult.extras as Map<Any?, *>
+
+                val result = KMMDeepLinkResult(
+                    destination = null,
+                    campaign = gcdCampaign,
+                    campaignId = null,
+                    clickHttpReferrer = null,
+                    isDeferred = false,
+                    mediaSource = gcdMediaSource,
+                    matchType = null,
+                    clickEventJson = null,
+                    metadata = null,
+                    deeplinkSource = DeeplinkSource.GCD,
+                    hasDescopeToken = hasDescopeToken(extras),
+                    hasLoginType = hasLoginType(extras),
+                    loginType = getLoginType(extras),
+                    udlStatus = null,
+                    udlMatchType = null,
+                    gcdAfStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC,
+                    gcdMediaSource = gcdMediaSource,
+                    gcdCampaign = gcdCampaign,
+                    afSub1 = getAfSub1(extras)
+                )
+                options.listener.onDeepLinkingResult(result)
             }
         }
 
@@ -44,6 +80,34 @@ actual class OneLinkService actual constructor(
                     appConversionResult.isOrganic,
                     appConversionResult.extras
                 )
+
+                val gcdMediaSource = appConversionResult.extras["media_source"]?.toString()
+                val gcdCampaign = appConversionResult.extras["campaign"]?.toString()
+                @Suppress("UNCHECKED_CAST")
+                val extras = appConversionResult.extras as Map<Any?, *>
+
+                val result = KMMDeepLinkResult(
+                    destination = null,
+                    campaign = gcdCampaign,
+                    campaignId = null,
+                    clickHttpReferrer = null,
+                    isDeferred = false,
+                    mediaSource = gcdMediaSource,
+                    matchType = null,
+                    clickEventJson = null,
+                    metadata = null,
+                    deeplinkSource = DeeplinkSource.GCD,
+                    hasDescopeToken = hasDescopeToken(extras),
+                    hasLoginType = hasLoginType(extras),
+                    loginType = getLoginType(extras),
+                    udlStatus = null,
+                    udlMatchType = null,
+                    gcdAfStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC,
+                    gcdMediaSource = gcdMediaSource,
+                    gcdCampaign = gcdCampaign,
+                    afSub1 = getAfSub1(extras)
+                )
+                options.listener.onDeepLinkingResult(result)
             }
         }
 
@@ -58,7 +122,9 @@ actual class OneLinkService actual constructor(
                 val deepLink = deepLinkResult.deepLink
                 val clickEventValues = deepLink.clickEvent.toMap()
                 val fullDeepLinkValue = deepLink.deepLinkValue ?: this.getDeepLinkValue(clickEventValues)
-                val result = com.metacto.kmm.appsflyer.model.DeepLinkResult(
+                val metadata = this.getDeepLinkMetadata(fullDeepLinkValue, clickEventValues)
+
+                val result = KMMDeepLinkResult(
                     destination = fullDeepLinkValue?.let { this.getDestinationPath(fullDeepLinkValue) },
                     campaign = deepLink.campaign,
                     campaignId = deepLink.campaignId,
@@ -67,7 +133,17 @@ actual class OneLinkService actual constructor(
                     mediaSource = deepLink.mediaSource,
                     matchType = deepLink.matchType,
                     clickEventJson = deepLink.clickEvent.toString(),
-                    metadata = this.getDeepLinkMetadata(fullDeepLinkValue, clickEventValues),
+                    metadata = metadata,
+                    deeplinkSource = DeeplinkSource.UDL,
+                    hasDescopeToken = hasDescopeToken(metadata.extras),
+                    hasLoginType = hasLoginType(metadata.extras),
+                    loginType = getLoginType(metadata.extras),
+                    udlStatus = UdlStatus.FOUND,
+                    udlMatchType = deepLink.matchType,
+                    gcdAfStatus = null,
+                    gcdMediaSource = null,
+                    gcdCampaign = null,
+                    afSub1 = getAfSub1(clickEventValues)
                 )
                 options.listener.onDeepLinkingResult(result)
             }
@@ -87,7 +163,7 @@ actual class OneLinkService actual constructor(
             options.enableDebugLog?.let { setDebugLog(it) }
             options.minTimeBetweenSessions?.let { setMinTimeBetweenSessions(it) }
             if (options.appInviteOneLinkTemplateId != null) {
-                //set the OneLink template id for share invite links
+                // Set the OneLink template id for share invite links
                 setAppInviteOneLink(options.appInviteOneLinkTemplateId)
             }
             subscribeForDeepLink(deepLinkListener)
