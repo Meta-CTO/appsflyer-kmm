@@ -95,7 +95,8 @@ actual class OneLinkService actual constructor(
                     gcdAfStatus = null,
                     gcdMediaSource = null,
                     gcdCampaign = null,
-                    afSub1 = getAfSub1(clickEventValues)
+                    afSub1 = getAfSub1(clickEventValues),
+                    extraLink = clickEventValues["link"] as? String
                 )
 
                 options.listener.onDeepLinkingResult(deepLinkResult)
@@ -147,7 +148,8 @@ actual class OneLinkService actual constructor(
             gcdAfStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC,
             gcdMediaSource = gcdMediaSource,
             gcdCampaign = gcdCampaign,
-            afSub1 = getAfSub1(extras)
+            afSub1 = getAfSub1(extras),
+            extraLink = null
         )
         options.listener.onDeepLinkingResult(deepLinkResult)
     }

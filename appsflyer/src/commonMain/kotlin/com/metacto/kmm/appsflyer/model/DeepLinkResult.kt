@@ -19,5 +19,6 @@ data class DeepLinkResult(
     val gcdAfStatus: GcdAfStatus?,
     val gcdMediaSource: String?,
     val gcdCampaign: String?,
-    val afSub1: String?
+    val afSub1: String?,
+    val extraLink: String?
 )
