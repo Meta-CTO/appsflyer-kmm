@@ -5,11 +5,6 @@ enum class DeeplinkSource {
     GCD
 }
 
-enum class LoginType {
-    EMAIL,
-    PHONE
-}
-
 enum class UdlStatus {
     FOUND,
     NOT_FOUND

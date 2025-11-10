@@ -34,7 +34,7 @@ fun ShareLinkGenerator.generateDeepLinkValue(
     val stringBuilder = StringBuilder()
     stringBuilder.append("${AppsFlyerConstants.DEEP_LINK_DESTINATION}=$destination")
     channel?.let {
-        stringBuilder.append("__${AppsFlyerConstants.CHANNEL}=$it")
+        stringBuilder.append("__${AppsFlyerConstants.AF_CHANNEL}=$it")
     }
     referrerCustomerId?.let {
         stringBuilder.append("__${AppsFlyerConstants.REFERRER_CUSTOMER_ID}=$it")
