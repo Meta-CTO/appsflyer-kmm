@@ -2,12 +2,15 @@ package com.metacto.kmm.appsflyer.model
 
 import com.appsflyer.deeplink.DeepLinkResult
 
-actual open class DeepLinkError {
+actual open class DeepLinkError(
+    open val message: String? = null
+) {
     data object Timeout : DeepLinkError()
     data object Network : DeepLinkError()
     data object HttpStatusCode : DeepLinkError()
     data object Unexpected : DeepLinkError()
     data object DeveloperError : DeepLinkError()
+    data class Generic(override val message: String) : DeepLinkError(message)
 }
 
 

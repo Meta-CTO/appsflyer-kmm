@@ -6,17 +6,7 @@ import com.appsflyer.AppsFlyerLib
 import com.appsflyer.attribution.AppsFlyerRequestListener
 import com.appsflyer.deeplink.DeepLinkListener
 import com.appsflyer.deeplink.DeepLinkResult
-import com.metacto.kmm.appsflyer.model.getDeepLinkValue
-import com.metacto.kmm.appsflyer.model.getDeepLinkMetadata
-import com.metacto.kmm.appsflyer.model.getDestinationPath
-import com.metacto.kmm.appsflyer.model.toError
-import com.metacto.kmm.appsflyer.model.hasDescopeToken
-import com.metacto.kmm.appsflyer.model.hasLoginType
-import com.metacto.kmm.appsflyer.model.getLoginType
-import com.metacto.kmm.appsflyer.model.getAfSub1
-import com.metacto.kmm.appsflyer.model.DeeplinkSource
-import com.metacto.kmm.appsflyer.model.UdlStatus
-import com.metacto.kmm.appsflyer.model.GcdAfStatus
+import com.metacto.kmm.appsflyer.model.*
 import com.metacto.kmm.appsflyer.util.getAppAttributionResult
 import com.metacto.kmm.appsflyer.model.DeepLinkResult as KMMDeepLinkResult
 
@@ -34,87 +24,71 @@ actual class OneLinkService actual constructor(
         override fun onConversionDataSuccess(p0: MutableMap<String, Any>?) {
             if (p0 != null) {
                 val appConversionResult = this@OneLinkService.getAppAttributionResult(p0)
-                options.listener.onAppAttribution(
-                    appConversionResult.isOrganic,
-                    appConversionResult.extras
-                )
-
-                val gcdMediaSource = appConversionResult.extras["media_source"]?.toString()
-                val gcdCampaign = appConversionResult.extras["campaign"]?.toString()
                 @Suppress("UNCHECKED_CAST")
                 val extras = appConversionResult.extras as Map<Any?, *>
+                @Suppress("UNCHECKED_CAST")
+                val conversion = p0 as Map<Any?, *>
 
-                val result = KMMDeepLinkResult(
-                    destination = null,
-                    campaign = gcdCampaign,
-                    campaignId = null,
-                    clickHttpReferrer = null,
-                    isDeferred = false,
-                    mediaSource = gcdMediaSource,
-                    matchType = null,
-                    clickEventJson = null,
-                    metadata = null,
-                    deeplinkSource = DeeplinkSource.GCD,
-                    hasDescopeToken = hasDescopeToken(extras),
-                    hasLoginType = hasLoginType(extras),
-                    loginType = getLoginType(extras),
+                val isFirstLaunch = (extras["is_first_launch"] as? String)?.toBoolean()
+                    ?: (extras["is_first_launch"] as? Boolean)
+                    ?: false
+
+                if (!isFirstLaunch) return
+
+                val deepLinkValue = extras.getDeepLinkValue()
+                val destination = deepLinkValue?.parseDestination()
+                val gcdStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC
+
+                val result = extras.buildDeepLinkResult(
+                    source = DeeplinkSource.GCD,
                     udlStatus = null,
-                    udlMatchType = null,
-                    gcdAfStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC,
-                    gcdMediaSource = gcdMediaSource,
-                    gcdCampaign = gcdCampaign,
-                    afSub1 = getAfSub1(extras),
-                    extraLink = null
+                    gcdStatus = gcdStatus,
+                    isDeferred = true,
+                    destination = destination,
+                    clickEvent = extras,
+                    conversion = conversion
                 )
-                options.listener.onDeepLinkingResult(result)
+
+                options.listener.onAttributionData(result)
             }
         }
 
         override fun onConversionDataFail(p0: String?) {
-            // No-op
+            if (p0 != null) {
+                options.listener.onDeepLinkingError(DeepLinkError.Generic(p0))
+            }
         }
 
         override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
             if (p0 != null) {
                 val appConversionResult = this@OneLinkService.getAppAttributionResult(p0)
-                options.listener.onAppAttribution(
-                    appConversionResult.isOrganic,
-                    appConversionResult.extras
-                )
-
-                val gcdMediaSource = appConversionResult.extras["media_source"]?.toString()
-                val gcdCampaign = appConversionResult.extras["campaign"]?.toString()
                 @Suppress("UNCHECKED_CAST")
                 val extras = appConversionResult.extras as Map<Any?, *>
+                @Suppress("UNCHECKED_CAST")
+                val conversion = p0 as Map<Any?, *>
 
-                val result = KMMDeepLinkResult(
-                    destination = null,
-                    campaign = gcdCampaign,
-                    campaignId = null,
-                    clickHttpReferrer = null,
-                    isDeferred = false,
-                    mediaSource = gcdMediaSource,
-                    matchType = null,
-                    clickEventJson = null,
-                    metadata = null,
-                    deeplinkSource = DeeplinkSource.GCD,
-                    hasDescopeToken = hasDescopeToken(extras),
-                    hasLoginType = hasLoginType(extras),
-                    loginType = getLoginType(extras),
+                val deepLinkValue = extras.getDeepLinkValue()
+                val destination = deepLinkValue?.parseDestination()
+                val gcdStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC
+
+                val result = extras.buildDeepLinkResult(
+                    source = DeeplinkSource.GCD,
                     udlStatus = null,
-                    udlMatchType = null,
-                    gcdAfStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC,
-                    gcdMediaSource = gcdMediaSource,
-                    gcdCampaign = gcdCampaign,
-                    afSub1 = getAfSub1(extras),
-                    extraLink = null
+                    gcdStatus = gcdStatus,
+                    isDeferred = false,
+                    destination = destination,
+                    clickEvent = extras,
+                    conversion = conversion
                 )
-                options.listener.onDeepLinkingResult(result)
+
+                options.listener.onAttributionData(result)
             }
         }
 
         override fun onAttributionFailure(p0: String?) {
-            // No-op
+            if (p0 != null) {
+                options.listener.onDeepLinkingError(DeepLinkError.Generic(p0))
+            }
         }
     }
 
@@ -123,36 +97,24 @@ actual class OneLinkService actual constructor(
             DeepLinkResult.Status.FOUND -> {
                 val deepLink = deepLinkResult.deepLink
                 val clickEventValues = deepLink.clickEvent.toMap()
-                val fullDeepLinkValue = deepLink.deepLinkValue ?: this.getDeepLinkValue(clickEventValues)
-                val metadata = this.getDeepLinkMetadata(fullDeepLinkValue, clickEventValues)
+                val deepLinkValue = deepLink.deepLinkValue ?: clickEventValues.getDeepLinkValue()
+                val destination = deepLinkValue?.parseDestination()
 
-                val result = KMMDeepLinkResult(
-                    destination = fullDeepLinkValue?.let { this.getDestinationPath(fullDeepLinkValue) },
-                    campaign = deepLink.campaign,
-                    campaignId = deepLink.campaignId,
-                    clickHttpReferrer = deepLink.clickHttpReferrer,
-                    isDeferred = deepLink.isDeferred,
-                    mediaSource = deepLink.mediaSource,
-                    matchType = deepLink.matchType,
-                    clickEventJson = deepLink.clickEvent.toString(),
-                    metadata = metadata,
-                    deeplinkSource = DeeplinkSource.UDL,
-                    hasDescopeToken = hasDescopeToken(metadata.extras),
-                    hasLoginType = hasLoginType(metadata.extras),
-                    loginType = getLoginType(metadata.extras),
+                val result = clickEventValues.buildDeepLinkResult(
+                    source = DeeplinkSource.UDL,
                     udlStatus = UdlStatus.FOUND,
-                    udlMatchType = deepLink.matchType,
-                    gcdAfStatus = null,
-                    gcdMediaSource = null,
-                    gcdCampaign = null,
-                    afSub1 = getAfSub1(clickEventValues),
-                    extraLink = deepLink.clickEvent.getString("link")
+                    gcdStatus = null,
+                    isDeferred = deepLink.isDeferred,
+                    destination = destination,
+                    clickEvent = clickEventValues,
+                    conversion = null
                 )
+
                 options.listener.onDeepLinkingResult(result)
             }
 
             DeepLinkResult.Status.NOT_FOUND -> {
-                options.listener.onDeepLinkingResult(null)
+                options.listener.onDeepLinkNotFound(KMMDeepLinkResult.notFound())
             }
 
             else -> {
@@ -166,9 +128,9 @@ actual class OneLinkService actual constructor(
             options.enableDebugLog?.let { setDebugLog(it) }
             options.minTimeBetweenSessions?.let { setMinTimeBetweenSessions(it) }
             if (options.appInviteOneLinkTemplateId != null) {
-                // Set the OneLink template id for share invite links
                 setAppInviteOneLink(options.appInviteOneLinkTemplateId)
             }
+
             subscribeForDeepLink(deepLinkListener)
             init(options.devAppKey, conversionListener, options.context as Context)
         }
@@ -206,6 +168,7 @@ actual class OneLinkService actual constructor(
                 *options.oneLinkCustomDomains?.toTypedArray().orEmpty()
             )
         }
+
         initialize()
         AppsFlyerLib.getInstance().start(options.context as Context, options.devAppKey)
     }

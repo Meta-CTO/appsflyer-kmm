@@ -7,18 +7,7 @@ import AppsFlyerLib.AppsFlyerDeepLinkDelegateProtocol
 import AppsFlyerLib.AppsFlyerDeepLinkResult
 import AppsFlyerLib.AppsFlyerLib
 import AppsFlyerLib.AppsFlyerLibDelegateProtocol
-import com.metacto.kmm.appsflyer.model.DeepLinkError
-import com.metacto.kmm.appsflyer.model.DeepLinkResult
-import com.metacto.kmm.appsflyer.model.getDeepLinkValue
-import com.metacto.kmm.appsflyer.model.getDeepLinkMetadata
-import com.metacto.kmm.appsflyer.model.getDestinationPath
-import com.metacto.kmm.appsflyer.model.hasDescopeToken
-import com.metacto.kmm.appsflyer.model.hasLoginType
-import com.metacto.kmm.appsflyer.model.getLoginType
-import com.metacto.kmm.appsflyer.model.getAfSub1
-import com.metacto.kmm.appsflyer.model.DeeplinkSource
-import com.metacto.kmm.appsflyer.model.UdlStatus
-import com.metacto.kmm.appsflyer.model.GcdAfStatus
+import com.metacto.kmm.appsflyer.model.*
 import com.metacto.kmm.appsflyer.util.getAppAttributionResult
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.convert
@@ -43,9 +32,7 @@ actual class OneLinkService actual constructor(
 
     actual fun initialize() {
         AppsFlyerLib.shared().apply {
-            options.devAppKey.let {
-                setAppsFlyerDevKey(options.devAppKey)
-            }
+            setAppsFlyerDevKey(options.devAppKey)
 
             setAppleAppID(options.appleAppId!!)
 
@@ -72,38 +59,24 @@ actual class OneLinkService actual constructor(
             AFSDKDeepLinkResultStatus.AFSDKDeepLinkResultStatusFound -> {
                 val deepLink = result.deepLink
                 val clickEventValues = deepLink?.clickEvent?.toMap() ?: emptyMap()
-                val fullDeepLinkValue =
-                    deepLink?.deeplinkValue ?: this.getDeepLinkValue(clickEventValues)
-                val metadata = this.getDeepLinkMetadata(fullDeepLinkValue, clickEventValues)
+                val deepLinkValue = deepLink?.deeplinkValue ?: clickEventValues.getDeepLinkValue()
+                val destination = deepLinkValue?.parseDestination()
 
-                val deepLinkResult = DeepLinkResult(
-                    destination = fullDeepLinkValue?.let { this.getDestinationPath(fullDeepLinkValue) },
-                    campaign = deepLink?.campaign,
-                    campaignId = deepLink?.campaignId,
-                    clickHttpReferrer = deepLink?.clickHTTPReferrer,
-                    isDeferred = deepLink?.isDeferred,
-                    mediaSource = deepLink?.mediaSource,
-                    matchType = deepLink?.matchType,
-                    clickEventJson = deepLink?.clickEvent.toString(),
-                    metadata = metadata,
-                    deeplinkSource = DeeplinkSource.UDL,
-                    hasDescopeToken = hasDescopeToken(metadata.extras),
-                    hasLoginType = hasLoginType(metadata.extras),
-                    loginType = getLoginType(metadata.extras),
+                val deepLinkResult = clickEventValues.buildDeepLinkResult(
+                    source = DeeplinkSource.UDL,
                     udlStatus = UdlStatus.FOUND,
-                    udlMatchType = deepLink?.matchType,
-                    gcdAfStatus = null,
-                    gcdMediaSource = null,
-                    gcdCampaign = null,
-                    afSub1 = getAfSub1(clickEventValues),
-                    extraLink = clickEventValues["link"] as? String
+                    gcdStatus = null,
+                    isDeferred = deepLink?.isDeferred,
+                    destination = destination,
+                    clickEvent = clickEventValues,
+                    conversion = null
                 )
 
                 options.listener.onDeepLinkingResult(deepLinkResult)
             }
 
             AFSDKDeepLinkResultStatus.AFSDKDeepLinkResultStatusNotFound -> {
-                options.listener.onDeepLinkingResult(null)
+                options.listener.onDeepLinkNotFound(DeepLinkResult.notFound())
             }
 
             AFSDKDeepLinkResultStatus.AFSDKDeepLinkResultStatusFailure -> {
@@ -111,47 +84,42 @@ actual class OneLinkService actual constructor(
             }
 
             else -> {
-                options.listener.onDeepLinkingResult(null)
+                options.listener.onDeepLinkNotFound(DeepLinkResult.notFound())
             }
         }
     }
 
     override fun onConversionDataFail(error: NSError) {
-        // No-op
+        options.listener.onDeepLinkingError(DeepLinkError(error))
     }
 
     override fun onConversionDataSuccess(conversionInfo: Map<Any?, *>) {
         val appConversionResult = this.getAppAttributionResult(conversionInfo)
-        options.listener.onAppAttribution(appConversionResult.isOrganic, appConversionResult.extras)
-
-        val gcdMediaSource = appConversionResult.extras["media_source"]?.toString()
-        val gcdCampaign = appConversionResult.extras["campaign"]?.toString()
         @Suppress("UNCHECKED_CAST")
         val extras = appConversionResult.extras as Map<Any?, *>
 
-        val deepLinkResult = DeepLinkResult(
-            destination = null,
-            campaign = gcdCampaign,
-            campaignId = null,
-            clickHttpReferrer = null,
-            isDeferred = false,
-            mediaSource = gcdMediaSource,
-            matchType = null,
-            clickEventJson = null,
-            metadata = null,
-            deeplinkSource = DeeplinkSource.GCD,
-            hasDescopeToken = hasDescopeToken(extras),
-            hasLoginType = hasLoginType(extras),
-            loginType = getLoginType(extras),
+        val isFirstLaunch = extras.getBoolean("is_first_launch") ?: false
+        if (!isFirstLaunch) return
+
+        val deepLinkValue = (conversionInfo["deep_link_value"] ?: extras["deep_link_value"])?.toString()
+        val destination = deepLinkValue?.parseDestination()
+        val gcdStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC
+
+        val deepLinkResult = extras.buildDeepLinkResult(
+            source = DeeplinkSource.GCD,
             udlStatus = null,
-            udlMatchType = null,
-            gcdAfStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC,
-            gcdMediaSource = gcdMediaSource,
-            gcdCampaign = gcdCampaign,
-            afSub1 = getAfSub1(extras),
-            extraLink = null
+            gcdStatus = gcdStatus,
+            isDeferred = isFirstLaunch,
+            destination = destination,
+            clickEvent = null,
+            conversion = conversionInfo
         )
-        options.listener.onDeepLinkingResult(deepLinkResult)
+
+        options.listener.onAttributionData(deepLinkResult)
+    }
+
+    override fun onAppOpenAttributionFailure(error: NSError) {
+        options.listener.onDeepLinkingError(DeepLinkError(error))
     }
 
     actual fun start(
