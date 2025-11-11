@@ -23,187 +23,101 @@ actual class OneLinkService actual constructor(
     private val conversionListener = object : AppsFlyerConversionListener {
         override fun onConversionDataSuccess(p0: MutableMap<String, Any>?) {
             if (p0 != null) {
-                println("🔗 DEEPLINK [KMM-GCD] onConversionDataSuccess called")
-                println("🔗 DEEPLINK [KMM-GCD] conversionInfo: $p0")
-
                 val appConversionResult = this@OneLinkService.getAppAttributionResult(p0)
-                options.listener.onAppAttribution(
-                    appConversionResult.isOrganic,
-                    appConversionResult.extras
-                )
-
-                val gcdMediaSource = appConversionResult.extras["media_source"]?.toString()
-                val gcdCampaign = appConversionResult.extras["campaign"]?.toString()
                 @Suppress("UNCHECKED_CAST")
                 val extras = appConversionResult.extras as Map<Any?, *>
-
-                println("🔗 DEEPLINK [KMM-GCD] extras: $extras")
-                println("🔗 DEEPLINK [KMM-GCD] gcdMediaSource: $gcdMediaSource")
-                println("🔗 DEEPLINK [KMM-GCD] gcdCampaign: $gcdCampaign")
+                @Suppress("UNCHECKED_CAST")
+                val conversion = p0 as Map<Any?, *>
 
                 val isFirstLaunch = (extras["is_first_launch"] as? String)?.toBoolean()
                     ?: (extras["is_first_launch"] as? Boolean)
                     ?: false
-                println("🔗 DEEPLINK [KMM-GCD] isFirstLaunch: $isFirstLaunch")
+
+                if (!isFirstLaunch) return
 
                 val deepLinkValue = extras.getDeepLinkValue()
-                println("🔗 DEEPLINK [KMM-GCD] deepLinkValue: $deepLinkValue")
-
                 val destination = deepLinkValue?.parseDestination()
-                println("🔗 DEEPLINK [KMM-GCD] destination: $destination")
+                val gcdStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC
 
-                val result = KMMDeepLinkResult(
-                    origin = extras.buildOrigin(
-                        source = DeeplinkSource.GCD,
-                        udlStatus = null,
-                        gcdStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC,
-                        isDeferred = isFirstLaunch
-                    ),
-                    campaign = extras.buildCampaign(),
-                    advertisement = extras.buildAdvertisement(),
-                    deepLink = extras.buildDeepLink(destination),
-                    timestamps = extras.buildTimestamps(),
-                    cost = extras.buildCost(),
-                    device = extras.buildDevice(),
-                    retargeting = extras.buildRetargeting(),
-                    engagement = extras.buildEngagement(),
-                    viewability = extras.buildViewability(),
-                    network = extras.buildNetwork(),
-                    customParameters = extras.buildCustomParameters(),
-                    socialPreview = extras.buildSocialPreview(),
-                    system = extras.buildSystem(),
+                val result = extras.buildDeepLinkResult(
+                    source = DeeplinkSource.GCD,
+                    udlStatus = null,
+                    gcdStatus = gcdStatus,
+                    isDeferred = true,
+                    destination = destination,
                     clickEvent = extras,
-                    conversion = p0 as? Map<Any?, *>
+                    conversion = conversion
                 )
 
-                println("🔗 DEEPLINK [KMM-GCD] ===== DeepLinkResult Summary (onConversionDataSuccess) =====")
-                println("🔗 DEEPLINK [KMM-GCD]   origin.source: ${result.origin.source}")
-                println("🔗 DEEPLINK [KMM-GCD]   origin.status: ${result.origin.status}")
-                println("🔗 DEEPLINK [KMM-GCD]   origin.isDeferred: ${result.origin.isDeferred}")
-                println("🔗 DEEPLINK [KMM-GCD]   deepLink.destination: ${result.deepLink.destination}")
-                println("🔗 DEEPLINK [KMM-GCD]   deepLink.value: ${result.deepLink.value}")
-                println("🔗 DEEPLINK [KMM-GCD]   deepLink.scheme: ${result.deepLink.scheme}")
-                println("🔗 DEEPLINK [KMM-GCD]   campaign.mediaSource: ${result.campaign.mediaSource}")
-                println("🔗 DEEPLINK [KMM-GCD]   campaign.name: ${result.campaign.name}")
-                println("🔗 DEEPLINK [KMM-GCD]   customParameters.sub1: ${result.customParameters.sub1}")
-                println("🔗 DEEPLINK [KMM-GCD]   customParameters.sub2: ${result.customParameters.sub2}")
-                println("🔗 DEEPLINK [KMM-GCD]   customParameters.sub3: ${result.customParameters.sub3}")
-                println("🔗 DEEPLINK [KMM-GCD] =====================================")
-                println("🔗 DEEPLINK [KMM-GCD] Calling listener.onDeepLinkingResult with GCD result")
-                options.listener.onDeepLinkingResult(result)
+                options.listener.onAttributionData(result)
             }
         }
 
         override fun onConversionDataFail(p0: String?) {
-            // No-op
+            if (p0 != null) {
+                options.listener.onDeepLinkingError(DeepLinkError.Generic(p0))
+            }
         }
 
         override fun onAppOpenAttribution(p0: MutableMap<String, String>?) {
             if (p0 != null) {
-                println("🔗 DEEPLINK [KMM-GCD] onAppOpenAttribution called")
-                println("🔗 DEEPLINK [KMM-GCD] attributionData: $p0")
-
                 val appConversionResult = this@OneLinkService.getAppAttributionResult(p0)
-                options.listener.onAppAttribution(
-                    appConversionResult.isOrganic,
-                    appConversionResult.extras
-                )
-
                 @Suppress("UNCHECKED_CAST")
                 val extras = appConversionResult.extras as Map<Any?, *>
+                @Suppress("UNCHECKED_CAST")
+                val conversion = p0 as Map<Any?, *>
 
                 val deepLinkValue = extras.getDeepLinkValue()
                 val destination = deepLinkValue?.parseDestination()
+                val gcdStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC
 
-                val result = KMMDeepLinkResult(
-                    origin = extras.buildOrigin(
-                        source = DeeplinkSource.GCD,
-                        udlStatus = null,
-                        gcdStatus = if (appConversionResult.isOrganic) GcdAfStatus.ORGANIC else GcdAfStatus.NON_ORGANIC,
-                        isDeferred = false
-                    ),
-                    campaign = extras.buildCampaign(),
-                    advertisement = extras.buildAdvertisement(),
-                    deepLink = extras.buildDeepLink(destination),
-                    timestamps = extras.buildTimestamps(),
-                    cost = extras.buildCost(),
-                    device = extras.buildDevice(),
-                    retargeting = extras.buildRetargeting(),
-                    engagement = extras.buildEngagement(),
-                    viewability = extras.buildViewability(),
-                    network = extras.buildNetwork(),
-                    customParameters = extras.buildCustomParameters(),
-                    socialPreview = extras.buildSocialPreview(),
-                    system = extras.buildSystem(),
+                val result = extras.buildDeepLinkResult(
+                    source = DeeplinkSource.GCD,
+                    udlStatus = null,
+                    gcdStatus = gcdStatus,
+                    isDeferred = false,
+                    destination = destination,
                     clickEvent = extras,
-                    conversion = p0 as? Map<Any?, *>
+                    conversion = conversion
                 )
 
-                println("🔗 DEEPLINK [KMM-GCD] ===== DeepLinkResult =====")
-                println("🔗 DEEPLINK [KMM-GCD] $result")
-                println("🔗 DEEPLINK [KMM-GCD] =====================================")
-                println("🔗 DEEPLINK [KMM-GCD] Calling listener.onDeepLinkingResult")
-                options.listener.onDeepLinkingResult(result)
+                options.listener.onAttributionData(result)
             }
         }
 
         override fun onAttributionFailure(p0: String?) {
-            // No-op
+            if (p0 != null) {
+                options.listener.onDeepLinkingError(DeepLinkError.Generic(p0))
+            }
         }
     }
 
     private val deepLinkListener = DeepLinkListener { deepLinkResult ->
         when (deepLinkResult.status) {
             DeepLinkResult.Status.FOUND -> {
-                println("🔗 DEEPLINK [KMM-UDL] Status: FOUND")
                 val deepLink = deepLinkResult.deepLink
                 val clickEventValues = deepLink.clickEvent.toMap()
-                println("🔗 DEEPLINK [KMM-UDL] clickEventValues: $clickEventValues")
-
                 val deepLinkValue = deepLink.deepLinkValue ?: clickEventValues.getDeepLinkValue()
-                println("🔗 DEEPLINK [KMM-UDL] deepLinkValue: $deepLinkValue")
-
                 val destination = deepLinkValue?.parseDestination()
-                println("🔗 DEEPLINK [KMM-UDL] destination: $destination")
 
-                val result = KMMDeepLinkResult(
-                    origin = clickEventValues.buildOrigin(
-                        source = DeeplinkSource.UDL,
-                        udlStatus = UdlStatus.FOUND,
-                        gcdStatus = null,
-                        isDeferred = deepLink.isDeferred
-                    ),
-                    campaign = clickEventValues.buildCampaign(),
-                    advertisement = clickEventValues.buildAdvertisement(),
-                    deepLink = clickEventValues.buildDeepLink(destination),
-                    timestamps = clickEventValues.buildTimestamps(),
-                    cost = clickEventValues.buildCost(),
-                    device = clickEventValues.buildDevice(),
-                    retargeting = clickEventValues.buildRetargeting(),
-                    engagement = clickEventValues.buildEngagement(),
-                    viewability = clickEventValues.buildViewability(),
-                    network = clickEventValues.buildNetwork(),
-                    customParameters = clickEventValues.buildCustomParameters(),
-                    socialPreview = clickEventValues.buildSocialPreview(),
-                    system = clickEventValues.buildSystem(),
+                val result = clickEventValues.buildDeepLinkResult(
+                    source = DeeplinkSource.UDL,
+                    udlStatus = UdlStatus.FOUND,
+                    gcdStatus = null,
+                    isDeferred = deepLink.isDeferred,
+                    destination = destination,
                     clickEvent = clickEventValues,
                     conversion = null
                 )
 
-                println("🔗 DEEPLINK [KMM-UDL] ===== DeepLinkResult =====")
-                println("🔗 DEEPLINK [KMM-UDL] $result")
-                println("🔗 DEEPLINK [KMM-UDL] =====================================")
-                println("🔗 DEEPLINK [KMM-UDL] Calling listener.onDeepLinkingResult")
                 options.listener.onDeepLinkingResult(result)
             }
 
             DeepLinkResult.Status.NOT_FOUND -> {
-                println("🔗 DEEPLINK [KMM-UDL] Status: NOT_FOUND")
-                options.listener.onDeepLinkingResult(null)
+                options.listener.onDeepLinkNotFound(KMMDeepLinkResult.notFound())
             }
 
             else -> {
-                println("🔗 DEEPLINK [KMM-UDL] Status: ERROR")
                 options.listener.onDeepLinkingError(deepLinkResult.error.toError())
             }
         }
@@ -214,9 +128,9 @@ actual class OneLinkService actual constructor(
             options.enableDebugLog?.let { setDebugLog(it) }
             options.minTimeBetweenSessions?.let { setMinTimeBetweenSessions(it) }
             if (options.appInviteOneLinkTemplateId != null) {
-                // Set the OneLink template id for share invite links
                 setAppInviteOneLink(options.appInviteOneLinkTemplateId)
             }
+
             subscribeForDeepLink(deepLinkListener)
             init(options.devAppKey, conversionListener, options.context as Context)
         }
@@ -254,6 +168,7 @@ actual class OneLinkService actual constructor(
                 *options.oneLinkCustomDomains?.toTypedArray().orEmpty()
             )
         }
+
         initialize()
         AppsFlyerLib.getInstance().start(options.context as Context, options.devAppKey)
     }

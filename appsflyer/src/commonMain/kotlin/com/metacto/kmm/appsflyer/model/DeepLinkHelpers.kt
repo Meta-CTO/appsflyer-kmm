@@ -1,32 +1,16 @@
 package com.metacto.kmm.appsflyer.model
 
 import com.metacto.kmm.appsflyer.util.AppsFlyerConstants
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 
 fun Map<Any?, *>.getDeepLinkValue(): String? {
     return this[AppsFlyerConstants.DEEP_LINK_VALUE]?.toString()
 }
 
 fun String.parseDestination(): String? {
-    return parseJsonDestination() ?: parseNormalDestination()
-}
-
-internal fun String.parseJsonDestination(): String? {
-    return try {
-        val destinationValue = Json.parseToJsonElement(this.trim()).let {
-            it.jsonObject[AppsFlyerConstants.DEEP_LINK_DESTINATION]?.jsonPrimitive?.content
-        }
-
-        val values = destinationValue?.split("__")
-        return values?.firstOrNull()
-    } catch (_: Throwable) {
-        null
+    if (!this.contains("__")) {
+        return this
     }
-}
 
-internal fun String.parseNormalDestination(): String? {
     val values = this.split("__")
     return values.find { it.startsWith(AppsFlyerConstants.DEEP_LINK_DESTINATION) }?.substringAfter("=")
 }
@@ -245,5 +229,34 @@ fun Map<Any?, *>.buildSystem(): System {
         referralCode = getString(AppsFlyerConstants.AF_REF),
         parameterForwarding = getBoolean(AppsFlyerConstants.AF_PARAM_FORWARDING),
         baseParametersForward = getBoolean(AppsFlyerConstants.AF_BASE_PARAMS_FORWARD)
+    )
+}
+
+fun Map<Any?, *>.buildDeepLinkResult(
+    source: DeeplinkSource,
+    udlStatus: UdlStatus?,
+    gcdStatus: GcdAfStatus?,
+    isDeferred: Boolean?,
+    destination: String?,
+    clickEvent: Map<Any?, *>?,
+    conversion: Map<Any?, *>?
+): DeepLinkResult {
+    return DeepLinkResult(
+        origin = buildOrigin(source, udlStatus, gcdStatus, isDeferred),
+        campaign = buildCampaign(),
+        advertisement = buildAdvertisement(),
+        deepLink = buildDeepLink(destination),
+        timestamps = buildTimestamps(),
+        cost = buildCost(),
+        device = buildDevice(),
+        retargeting = buildRetargeting(),
+        engagement = buildEngagement(),
+        viewability = buildViewability(),
+        network = buildNetwork(),
+        customParameters = buildCustomParameters(),
+        socialPreview = buildSocialPreview(),
+        system = buildSystem(),
+        clickEvent = clickEvent,
+        conversion = conversion
     )
 }
