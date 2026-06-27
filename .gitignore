@@ -12,3 +12,8 @@ local.properties
 iosApp/Pods
 .kotlin
 .claude/settings.local.json
+
+# environment variables (post-PolinRider hardening)
+.env
+.env.*
+!.env.example
